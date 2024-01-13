@@ -248,6 +248,7 @@ void solve() {
     //solve wild
     #pragma omp parallel for
     for(int i = 0; i < wild.size(); ++i) {
+        /*
         for(int j = 0; j < n; ++j) {
             for(auto k : data_set[j]) {
                 if(wildcard(wild[i], k)) {
@@ -256,8 +257,9 @@ void solve() {
                 }
             }
         }
-        /* auto ans = prefix_trie.query_wild(wild[i]); */
-        /* for(auto j : ans) wild_ans[i].insert(j); */
+        */
+        auto ans = prefix_trie.query_wild(wild[i]);
+        for(auto j : ans) wild_ans[i].insert(j);
     }
 }
 
