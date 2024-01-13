@@ -16,7 +16,7 @@ struct Trie {
 public:
 	struct Node {
 		array<Node*, ALPHABET> go{};
-        int exist = 0;
+        set<int> path, tail;
 	};
 
 	Trie() {
@@ -35,12 +35,23 @@ public:
 		return p->go[v];
 	}
 
-	void insert(const string& s) {
+	void insert(const string& s, const int &idx) {
 		Node* p = root;
 		for(char c : s) {
 			p = next(p, c);
+            p->path.insert(idx);
 		}
-        p->exist += 1;
+        p->tail.insert(idx);
+	}
+
+	void rev_insert(string s, const int &idx) {
+        reverse(s.begin(), s.end());
+		Node* p = root;
+		for(char c : s) {
+			p = next(p, c);
+            p->path.insert(idx);
+		}
+        p->tail.insert(idx);
 	}
 
 	void clear() {
@@ -48,30 +59,48 @@ public:
 		sz = 1;
 	}
 
-    inline int find(const string& s) const {
+    inline set<int> query_exact(const string& s) const {
         Node *p = root;
         for(int v : s) {
             v -= MIN_CHAR;
             if(p->go[v]) p = p->go[v];
-            else return 0;
+            else return {};
         }
-        return p->exist;
+        return p->tail;
     }
 
-	inline int longest_common_prefix(const string& a) const {
+	inline set<int> query_prefix(const string& a) const {
         Node *p = root;
-		int ans = 0;
 		for(int v : a) {
             v -= MIN_CHAR;
-			if(p->go[v]) {
-				ans += 1;
-                p = p->go[v];
-			} else {
-				break;
-			}
+			if(p->go[v]) p = p->go[v];
+            else return {};
 		}
-		return ans;
+		return p->path;
 	}
+
+    inline set<int> query_wild(const string& a, int idx, Node *cur) const {
+        if(idx == a.size()) return cur->tail;
+        if(a[idx] == '*') {
+            if(idx == a.size() - 1) return cur->path;
+            set<int> res;
+            if(cur->go[a[idx + 1] - MIN_CHAR]) res = query_wild(a, idx + 2, cur->go[a[idx + 1] - MIN_CHAR]);
+            for(int i = 0; i < ALPHABET; ++i) {
+                if(cur->go[i]) {
+                    auto tmp = query_wild(a, idx, cur->go[i]);
+                    for(auto j : tmp) res.insert(j);
+                }
+            }
+            return res;
+        }
+        else {
+            if(cur->go[a[idx] - MIN_CHAR]) return query_wild(a, idx + 1, cur->go[a[idx] - MIN_CHAR]);
+            else return {};
+        }
+	}
+    inline set<int> query_wild(const string &s) {
+        return query_wild(s, 0, root);
+    }
 
 private:
 	Node* root = nullptr;
@@ -81,75 +110,6 @@ private:
 		return new Node();
 	}
 };
-
-template<class T>
-struct rolling_hash{
-    int p, q;
-    vector<int> hash, p_table;
-    inline void build(T v, int x, int y){
-        hash.resize(v.size() + 5);
-        p_table.resize(v.size() + 5);
-        p = x, q = y;
-		p_table[0] = 1,hash[0] = (int)v[0];
-		for(int j = 1;j<v.size();++j){
-			p_table[j] = (1ll*p_table[j-1]*p)%q;
-			hash[j] = (1ll*hash[j-1]*p+(int)v[j])%q;
-		}
-    }
-	inline int query(int l,int r){
-		int ans;
-        if(l==0){
-			ans = hash[r];
-			return ans;
-		}
-		int x = (hash[r]-(1ll*hash[l-1]*p_table[r-l+1]))%q;
-		x = (x+q)%q;
-		ans = x;
-        return ans;
-    }
-};
-int wildcard(const string &a, const string &b){
-    function<int(string, string, int, int)> f = [&](string a, string b, int p, int q) {
-        rolling_hash<string>hs[2];
-        hs[0].build(a, p, q);
-        hs[1].build(b, p, q);
-        int n = a.size(),m = b.size();
-        for(int l = 0,r = -2,lhs = 0,rhs = 0,j = 0;l<n;l = r+2,lhs = rhs,rhs = 0){
-            for(int i = r+2;i<n;++i){
-                if(a[i]=='*'){
-                    rhs = 1;
-                    r = i-1;
-                    break;
-                }
-            }
-            if(!rhs)r = n-1;
-            if(l>r)continue;
-            int len = r-l;
-            if(!lhs){
-                if(j+len>=m || hs[1].query(j,j+len)!=hs[0].query(l,r)){
-                    return 0;
-                }
-                j = j+len+1;
-            }
-            else{
-                bool flag = 0;
-                for(;j+len<m;++j){
-                    if(hs[1].query(j,j+len)==hs[0].query(l,r)){
-                        if(!rhs and j+len!=m-1)continue;
-                        flag = 1;
-                        j = j+len+1;
-                        break;
-                    }
-                }
-                if(!flag){
-                    return 0;
-                }
-            }
-        }
-        return 1;
-    };
-    return f(a, b, 827167801, 999999937) and f(a, b, 998244353, 999999929);
-}
 
 string int_to_string(int num) { //TODO
     return to_string(num);
@@ -194,9 +154,11 @@ vector<string> split(const string& str, const string& delim) {
 vector<string> title;
 vector<vector<pair<char, int>>> qry;
 vector<string> prefix, suffix, exact, wild;
-vector<vector<int>> ans;
 vector<vector<string>> data_set;
-vector<vector<int>> prefix_ans, suffix_ans, exact_ans, wild_ans;
+vector<set<int>> ans;
+vector<set<int>> prefix_ans, suffix_ans, exact_ans, wild_ans;
+
+Trie prefix_trie, suffix_trie;
 
 void solve() {
     prefix_ans.resize(prefix.size());
@@ -204,93 +166,56 @@ void solve() {
     suffix_ans.resize(suffix.size());
     wild_ans.resize(wild.size());
     int n = data_set.size(), q = qry.size();
-    vector<Trie<26, 'a'>> prefix_trie(n), suffix_trie(n);
 
     //solve prefix and exact
-    for(int i = 0; i < n; ++i) {
-        for(auto j : data_set[i]) {
-            prefix_trie[i].insert(j);
-        }
-        for(int j = 0; j < prefix.size(); ++j) {
-            if(prefix[j].size() == prefix_trie[i].longest_common_prefix(prefix[j])) 
-                prefix_ans[j].push_back(i);
-        }
-        for(int j = 0; j < exact.size(); ++j) {
-            if(prefix_trie[i].find(exact[j])) {
-                exact_ans[j].push_back(i);
-            }
-        }
+    #pragma omp parallel for
+    for(int i = 0; i < prefix.size(); ++i) {
+        auto ans = prefix_trie.query_prefix(prefix[i]);
+        for(auto j : ans) prefix_ans[i].insert(j);
+    }
+    #pragma omp parallel for
+    for(int i = 0; i < exact.size(); ++i) {
+        auto ans = prefix_trie.query_exact(exact[i]);
+        for(auto j : ans) exact_ans[i].insert(j);
     }
     //solve suffix
-    for(int i = 0; i < n; ++i) {
-        for(auto j : data_set[i]) {
-            reverse(j.begin(), j.end());
-            suffix_trie[i].insert(j);
-        }
-        for(int j = 0; j < suffix.size(); ++j) {
-            reverse(suffix[j].begin(), suffix[j].end());
-            if(suffix[j].size() == suffix_trie[i].longest_common_prefix(suffix[j])) {
-                suffix_ans[j].push_back(i);
-            }
-            reverse(suffix[j].begin(), suffix[j].end());
-        }
+    #pragma omp parallel for
+    for(int i = 0; i < suffix.size(); ++i) {
+        reverse(suffix[i].begin(), suffix[i].end());
+        auto ans = suffix_trie.query_prefix(suffix[i]);
+        for(auto j : ans) suffix_ans[i].insert(j);
     }
     //solve wild
     #pragma omp parallel for
     for(int i = 0; i < wild.size(); ++i) {
-        for(int j = 0; j < n; ++j) {
-            for(auto k : data_set[j]) {
-                if(wildcard(wild[i], k)) {
-                    wild_ans[i].push_back(j);
-                    break;
-                }
-            }
-        }
+        auto ans = prefix_trie.query_wild(wild[i]);
+        for(auto j : ans) wild_ans[i].insert(j);
     }
 }
 
-vector<int> And(const vector<int> &a, const vector<int> &b) {
-    vector<int> res;
-    for(int i = 0, j = 0; i < a.size() and j < b.size(); ) {
-        if(a[i] < b[j]) i++;
-        else if(a[i] > b[j]) j++;
-        else {
-            res.push_back(a[i]);
-            i++, j++;
-        }
+set<int> And(const set<int> &a, const set<int> &b) {
+    set<int> res;
+    for(auto i : a) {
+        if(b.find(i) != b.end()) res.insert(i);
     }
     return res;
 }
 
-vector<int> Or(const vector<int> &a, const vector<int> &b) {
-    vector<int> res;
-    int i = 0, j = 0;
-    for(; i < a.size() and j < b.size(); ) {
-        if(a[i] < b[j]) res.push_back(a[i++]);
-        else if(a[i] > b[j]) res.push_back(b[j++]);
-        else {
-            res.push_back(a[i]);
-            i++, j++;
-        }
-    }
-    while(i < a.size()) res.push_back(a[i++]);
-    while(j < b.size()) res.push_back(b[j++]);
+set<int> Or(const set<int> &a, const set<int> &b) {
+    set<int> res = a;
+    for(auto i : b) res.insert(i);
     return res;
 }
 
-vector<int> Sub(const vector<int> &a, const vector<int> &b) {
-    vector<int> res;
-    int i = 0;
-    for(int j = 0; i < a.size() and j < b.size(); ) {
-        if(a[i] < b[j]) res.push_back(a[i++]);
-        else if(a[i] > b[j]) j++;
-        else i++, j++;
+set<int> Sub(const set<int> &a, const set<int> &b) {
+    set<int> res = a;
+    for(auto i : a) {
+        if(b.find(i) != b.end()) res.erase(res.find(i));
     }
-    while(i < a.size()) res.push_back(a[i++]);
     return res;
 }
 
-void Operator(char op, vector<int> &a, const vector<int> b) {
+void Operator(char op, set<int> &a, const set<int> b) {
     if(op == '$') {
         a = b;
     }
@@ -384,23 +309,27 @@ int main(int argc, char *argv[]) {
     fi.close();
 
     while(1) {
-        string path = data_dir + int_to_string(title.size()) + FILE_EXTENSION;
+        int id = title.size();
+        string path = data_dir + int_to_string(id) + FILE_EXTENSION;
         fi.open(path, ios::in);
         if(!fi.is_open()) break;
         string title_name;
         getline(fi, title_name);
         title.push_back(title_name);
 
-        data_set.push_back({});
         tmp_string = split(title_name, " ");
         vector<string> content = word_parse(tmp_string);
-        for(auto &i : content)
-            data_set.back().push_back(i);
+        for(auto &i : content) {
+            prefix_trie.insert(i, id);
+            suffix_trie.rev_insert(i, id);
+        }
         while(getline(fi, tmp)) {
             tmp_string = split(tmp, " ");
             vector<string> content = word_parse(tmp_string);
-            for(auto &i : content)
-                data_set.back().push_back(i);
+            for(auto &i : content) {
+                prefix_trie.insert(i, id);
+                suffix_trie.rev_insert(i, id);
+            }
         }
 
         fi.close();
