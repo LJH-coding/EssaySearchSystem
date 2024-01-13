@@ -207,13 +207,10 @@ void solve() {
     vector<Trie<26, 'a'>> prefix_trie(n), suffix_trie(n);
 
     //solve prefix and exact
-    #pragma omp parallel for
     for(int i = 0; i < n; ++i) {
         for(auto j : data_set[i]) {
             prefix_trie[i].insert(j);
         }
-    }
-    for(int i = 0; i < n; ++i) {
         for(int j = 0; j < prefix.size(); ++j) {
             if(prefix[j].size() == prefix_trie[i].longest_common_prefix(prefix[j])) 
                 prefix_ans[j].push_back(i);
@@ -225,14 +222,11 @@ void solve() {
         }
     }
     //solve suffix
-    #pragma omp parallel for
     for(int i = 0; i < n; ++i) {
         for(auto j : data_set[i]) {
             reverse(j.begin(), j.end());
             suffix_trie[i].insert(j);
         }
-    }
-    for(int i = 0; i < n; ++i) {
         for(int j = 0; j < suffix.size(); ++j) {
             reverse(suffix[j].begin(), suffix[j].end());
             if(suffix[j].size() == suffix_trie[i].longest_common_prefix(suffix[j])) {
@@ -269,12 +263,18 @@ vector<int> And(const vector<int> &a, const vector<int> &b) {
 }
 
 vector<int> Or(const vector<int> &a, const vector<int> &b) {
-    vector<int> res = a;
-    for(auto i : b) {
-        res.push_back(i);
+    vector<int> res;
+    int i = 0, j = 0;
+    for(; i < a.size() and j < b.size(); ) {
+        if(a[i] < b[j]) res.push_back(a[i++]);
+        else if(a[i] > b[j]) res.push_back(b[j++]);
+        else {
+            res.push_back(a[i]);
+            i++, j++;
+        }
     }
-    sort(res.begin(), res.end());
-    res.erase(unique(res.begin(), res.end()), res.end());
+    while(i < a.size()) res.push_back(a[i++]);
+    while(j < b.size()) res.push_back(b[j++]);
     return res;
 }
 
