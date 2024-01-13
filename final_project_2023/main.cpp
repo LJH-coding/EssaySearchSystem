@@ -46,12 +46,7 @@ public:
 
 	void rev_insert(string s, const int &idx) {
         reverse(s.begin(), s.end());
-		Node* p = root;
-		for(char c : s) {
-			p = next(p, c);
-            p->path.insert(idx);
-		}
-        p->tail.insert(idx);
+        insert(s, idx);
 	}
 
 	void clear() {
