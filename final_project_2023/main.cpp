@@ -204,42 +204,39 @@ void solve() {
     suffix_ans.resize(suffix.size());
     wild_ans.resize(wild.size());
     int n = data_set.size(), q = qry.size();
+    vector<Trie<26, 'a'>> prefix_trie(n), suffix_trie(n);
 
     //solve prefix and exact
-    #pragma omp parallel for num_threads(4)
     for(int i = 0; i < n; ++i) {
-        Trie tr;
         for(auto j : data_set[i]) {
-            tr.insert(j);
+            prefix_trie[i].insert(j);
         }
         for(int j = 0; j < prefix.size(); ++j) {
-            if(prefix[j].size() == tr.longest_common_prefix(prefix[j])) 
+            if(prefix[j].size() == prefix_trie[i].longest_common_prefix(prefix[j])) 
                 prefix_ans[j].push_back(i);
         }
         for(int j = 0; j < exact.size(); ++j) {
-            if(tr.find(exact[j])) {
+            if(prefix_trie[i].find(exact[j])) {
                 exact_ans[j].push_back(i);
             }
         }
     }
     //solve suffix
-    #pragma omp parallel for num_threads(4)
     for(int i = 0; i < n; ++i) {
-        Trie tr;
         for(auto j : data_set[i]) {
             reverse(j.begin(), j.end());
-            tr.insert(j);
+            suffix_trie[i].insert(j);
         }
         for(int j = 0; j < suffix.size(); ++j) {
             reverse(suffix[j].begin(), suffix[j].end());
-            if(suffix[j].size() == tr.longest_common_prefix(suffix[j])) {
+            if(suffix[j].size() == suffix_trie[i].longest_common_prefix(suffix[j])) {
                 suffix_ans[j].push_back(i);
             }
             reverse(suffix[j].begin(), suffix[j].end());
         }
     }
     //solve wild
-    #pragma omp parallel for num_threads(4)
+    #pragma omp parallel for
     for(int i = 0; i < wild.size(); ++i) {
         for(int j = 0; j < n; ++j) {
             for(auto k : data_set[j]) {
@@ -303,28 +300,27 @@ void Operator(char op, vector<int> &a, const vector<int> b) {
 }
 
 void save_ans() {
+    ans.resize(qry.size());
+    #pragma omp parallel for
     for(int i = 0; i < qry.size(); ++i) {
-        priority_queue<int> pq;
-        vector<int> v;
         char op = '$';
         for(auto [a, b] : qry[i]) {
             if(a == 'p') {
-                Operator(op, v, prefix_ans[b]);
+                Operator(op, ans[i], prefix_ans[b]);
             }
             else if(a == 's') {
-                Operator(op, v, suffix_ans[b]);
+                Operator(op, ans[i], suffix_ans[b]);
             }
             else if(a == 'w') {
-                Operator(op, v, wild_ans[b]);
+                Operator(op, ans[i], wild_ans[b]);
             }
             else if(a == 'e') {
-                Operator(op, v, exact_ans[b]);
+                Operator(op, ans[i], exact_ans[b]);
             }
             else {
                 op = a;
             }
         }
-        ans.push_back(v);
     }
 }
 
