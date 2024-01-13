@@ -106,8 +106,73 @@ private:
 	}
 };
 
-string int_to_string(int num) { //TODO
-    return to_string(num);
+template<class T>
+struct rolling_hash{
+    int p, q;
+    vector<int> hash, p_table;
+    inline void build(T v, int x, int y){
+        hash.resize(v.size() + 5);
+        p_table.resize(v.size() + 5);
+        p = x, q = y;
+		p_table[0] = 1,hash[0] = (int)v[0];
+		for(int j = 1;j<v.size();++j){
+			p_table[j] = (1ll*p_table[j-1]*p)%q;
+			hash[j] = (1ll*hash[j-1]*p+(int)v[j])%q;
+		}
+    }
+	inline int query(int l,int r){
+		int ans;
+        if(l==0){
+			ans = hash[r];
+			return ans;
+		}
+		int x = (hash[r]-(1ll*hash[l-1]*p_table[r-l+1]))%q;
+		x = (x+q)%q;
+		ans = x;
+        return ans;
+    }
+};
+int wildcard(const string &a, const string &b){
+    function<int(string, string, int, int)> f = [&](string a, string b, int p, int q) {
+        rolling_hash<string>hs[2];
+        hs[0].build(a, p, q);
+        hs[1].build(b, p, q);
+        int n = a.size(),m = b.size();
+        for(int l = 0,r = -2,lhs = 0,rhs = 0,j = 0;l<n;l = r+2,lhs = rhs,rhs = 0){
+            for(int i = r+2;i<n;++i){
+                if(a[i]=='*'){
+                    rhs = 1;
+                    r = i-1;
+                    break;
+                }
+            }
+            if(!rhs)r = n-1;
+            if(l>r)continue;
+            int len = r-l;
+            if(!lhs){
+                if(j+len>=m || hs[1].query(j,j+len)!=hs[0].query(l,r)){
+                    return 0;
+                }
+                j = j+len+1;
+            }
+            else{
+                bool flag = 0;
+                for(;j+len<m;++j){
+                    if(hs[1].query(j,j+len)==hs[0].query(l,r)){
+                        if(!rhs and j+len!=m-1)continue;
+                        flag = 1;
+                        j = j+len+1;
+                        break;
+                    }
+                }
+                if(!flag){
+                    return 0;
+                }
+            }
+        }
+        return 1;
+    };
+    return f(a, b, 827167801, 999999937) and f(a, b, 998244353, 999999929) and f(a, b, 146672737, 922722049);
 }
 
 vector<string> word_parse(vector<string> tmp_string){
@@ -183,8 +248,16 @@ void solve() {
     //solve wild
     #pragma omp parallel for
     for(int i = 0; i < wild.size(); ++i) {
-        auto ans = prefix_trie.query_wild(wild[i]);
-        for(auto j : ans) wild_ans[i].insert(j);
+        for(int j = 0; j < n; ++j) {
+            for(auto k : data_set[j]) {
+                if(wildcard(wild[i], k)) {
+                    wild_ans[i].insert(j);
+                    break;
+                }
+            }
+        }
+        /* auto ans = prefix_trie.query_wild(wild[i]); */
+        /* for(auto j : ans) wild_ans[i].insert(j); */
     }
 }
 
@@ -305,16 +378,18 @@ int main(int argc, char *argv[]) {
 
     while(1) {
         int id = title.size();
-        string path = data_dir + int_to_string(id) + FILE_EXTENSION;
+        string path = data_dir + to_string(id) + FILE_EXTENSION;
         fi.open(path, ios::in);
         if(!fi.is_open()) break;
         string title_name;
         getline(fi, title_name);
         title.push_back(title_name);
+        data_set.push_back({});
 
         tmp_string = split(title_name, " ");
         vector<string> content = word_parse(tmp_string);
         for(auto &i : content) {
+            data_set.back().push_back(i);
             prefix_trie.insert(i, id);
             suffix_trie.rev_insert(i, id);
         }
@@ -322,6 +397,7 @@ int main(int argc, char *argv[]) {
             tmp_string = split(tmp, " ");
             vector<string> content = word_parse(tmp_string);
             for(auto &i : content) {
+                data_set.back().push_back(i);
                 prefix_trie.insert(i, id);
                 suffix_trie.rev_insert(i, id);
             }
