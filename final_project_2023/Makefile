@@ -1,6 +1,4 @@
 search:
-	g++ -fopenmp -std=c++17 -O2 -o essay-search ./*.cpp
-search_no_parallel:
 	g++ -std=c++17 -O2 -o essay-search ./*.cpp
 query:
 	./essay-search data query.txt output.txt
