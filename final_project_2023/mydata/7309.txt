@@ -1,0 +1,4 @@
+Coulomb dissociation, a tool for nuclear astrophysics  A short status report on Coulomb dissociation, an indirect method for nuclear
+astrophysics is given. An analytically solvable approach to study
+electromagnetic excitation in ^{11}Be, the archetype of a halo nucleus, is
+proposed.

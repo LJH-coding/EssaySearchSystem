@@ -1,0 +1,5 @@
+Symmetry in the Painlev\'e systems and their extensions to  four-dimensional systems  We give a new approach to the symmetries of the Painlev\'e equations
+$P_{V},P_{IV},P_{III}$ and $P_{II}$, respectively. Moreover, we make natural
+extensions to fourth-order analogues for each of the Painlev\'e equations
+$P_{V}$ and $P_{III}$, respectively, which are natural in the sense that they
+preserve the symmetries.

@@ -1,0 +1,6 @@
+High photon number path entanglement in the interference of  spontaneously downconverted photon pairs with coherent laser light  We show that the quantum interference between downconverted photon pairs and
+photons from coherent laser light can produce a maximally path entangled
+N-photon output component with a fidelity greater than 90% for arbitrarily high
+photon numbers. A simple beam splitter operation can thus transform the
+2-photon coherence of down-converted light into an almost optimal N-photon
+coherence.

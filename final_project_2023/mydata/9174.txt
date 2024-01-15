@@ -1,0 +1,2 @@
+Additivity of Jordan Elementary Maps on Rings  We prove that Jordan elementary surjective maps on rings are automatically
+additive.

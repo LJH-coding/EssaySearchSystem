@@ -1,0 +1,6 @@
+Effect of inelastic collisions on multiphonon Raman scattering in  graphene  We calculate the probabilities of two- and four-phonon Raman scattering in
+graphene and show how the relative intensities of the overtone peaks encode
+information about relative rates of different inelastic processes electrons are
+subject to. If the most important processes are electron-phonon and
+electron-electron scattering, the rate of the latter can be deduced from the
+Raman spectra.

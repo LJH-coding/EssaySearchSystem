@@ -1,0 +1,4 @@
+Sensitivity of the neutron crystal diffraction experiment to the neutron  EDM and to the nuclear P-,T-violating forces  We establish a link between an angle of the neutron polarization rotation in
+a crystal diffraction experiment and constants of the P-,T- violating
+interactions. The consideration applies to the energy range of thermal and
+resonance neutrons.

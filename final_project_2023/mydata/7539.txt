@@ -1,0 +1,3 @@
+p-torsion of Genus Two Curves Over Prime Fields of Characteristic p  Consider the Jacobian of a hyperelliptic genus two curve defined over a prime
+field of characteristic p and with complex multiplication. In this paper we
+show that the p-Sylow subgroup of the Jacobian is either trivial or of order p.

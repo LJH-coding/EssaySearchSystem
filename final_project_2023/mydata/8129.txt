@@ -1,0 +1,2 @@
+The Automorphism Group of Toric Deligne-Mumford Stacks  We prove that the automorphism group of a toric Deligne-Mumford stack is
+isomorphic to the $2$-group associated to the stacky fan.

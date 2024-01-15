@@ -1,0 +1,2 @@
+Generalized vector field  We define generalized vector fields, and contraction and Lie derivatives with
+respect to them. Generalized commutators are also defined.

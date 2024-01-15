@@ -1,0 +1,2 @@
+Number of irreducible polynomials in several variables over finite  fields  We give a formula and an estimation for the number of irreducible polynomials
+in two (or more) variables over a finite field.

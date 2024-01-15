@@ -1,0 +1,2 @@
+On Morita equivalence of group actions on locally C*-algebras  We extend to the context of locally C*-algebras a result of F. Combes [Proc.
+London Math. Soc. 49(1984), 289-306].

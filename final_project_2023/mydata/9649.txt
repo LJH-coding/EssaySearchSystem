@@ -1,0 +1,2 @@
+c-quark decay modes in B_c-meson  We discuss the possibility for observing $B_c$ mesons in decay channels with
+$B_s$ in final state.

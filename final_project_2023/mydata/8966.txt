@@ -1,0 +1,4 @@
+Multi-Agent Modeling Using Intelligent Agents in the Game of Lerpa  Game theory has many limitations implicit in its application. By utilizing
+multiagent modeling, it is possible to solve a number of problems that are
+unsolvable using traditional game theory. In this paper reinforcement learning
+is applied to neural networks to create intelligent agents

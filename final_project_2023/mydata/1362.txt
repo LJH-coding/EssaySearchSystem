@@ -1,0 +1,3 @@
+Spectra and symmetric eigentensors of the Lichnerowicz Laplacian on  $S^n$  We compute the eigenvalues with multiplicities of the Lichnerowicz Laplacian
+acting on the space of symmetric covariant tensor fields on the Euclidian
+sphere $S^n$. The spaces of symmetric eigentensors are explicitly given.

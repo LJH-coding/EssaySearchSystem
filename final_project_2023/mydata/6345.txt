@@ -1,0 +1,2 @@
+On the motive of certain subvarieties of fixed flags  We compute de Chow motive of certain subvarieties of the flags manifold and
+show that it is an Artin motive.

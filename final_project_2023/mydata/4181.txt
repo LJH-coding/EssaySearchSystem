@@ -1,0 +1,3 @@
+The integrals in Gradshteyn and Ryzhik. Part 4: The Gamma function  We present a systematic derivation of some definite integrals in the
+classical table of Gradshteyn and Ryzhik that can be reduced to the gamma
+function.

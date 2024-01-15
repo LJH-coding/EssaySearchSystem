@@ -1,0 +1,2 @@
+On group-theoretic models of randomness and genericity  We compare the random group model of Gromov and the model of generic groups
+of Arzhantseva and Ol'shanskii.

@@ -1,0 +1,2 @@
+Calculations of ${\cal O}(p^6)$ Resonance Coupling Constants in the  Scalar Sector of the ENJL Model  We derive the scalar resonance coupling constants of resonance chiral theory
+from the Extended Nambu Jona-Lasinio model by using heat-kernel expansion.

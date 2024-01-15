@@ -1,0 +1,4 @@
+Intersections of polynomial orbits, and a dynamical Mordell-Lang  conjecture  We prove that if nonlinear complex polynomials of the same degree have orbits
+with infinite intersection, then the polynomials have a common iterate. We also
+prove a special case of a conjectured dynamical analogue of the Mordell-Lang
+conjecture.

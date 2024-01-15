@@ -1,0 +1,2 @@
+Some extremal problems related to Bell-type inequalities  The best approximation by bounded product functions is calculated for some
+very simple two-valued functions of two variables.

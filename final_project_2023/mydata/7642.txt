@@ -1,0 +1,2 @@
+Critical Lieb-Thirring bounds for one-dimensional Schrodinger operators  and Jacobi matrices with regular ground states  This paper has been withdrawn by the author in favor of a stronger result
+proven by the author with R. Frank and T. Weidl in arXiv:0707.0998

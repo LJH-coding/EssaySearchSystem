@@ -1,0 +1,2 @@
+On the structure of positive maps between matrix algebras  A partial description of the structure of positive unital maps $\phi:
+M_2(\bC) \to M_{n+1}(\bC)$ ($n\geq 2$) is given.

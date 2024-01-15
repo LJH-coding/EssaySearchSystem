@@ -1,0 +1,4 @@
+On Z-graded loop Lie algebras, loop groups, and Toda equations  Toda equations associated with twisted loop groups are considered. Such
+equations are specified by Z-gradations of the corresponding twisted loop Lie
+algebras. The classification of Toda equations related to twisted loop Lie
+algebras with integrable Z-gradations is discussed.

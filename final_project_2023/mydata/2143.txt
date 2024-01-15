@@ -1,0 +1,1 @@
+An algebraic proof of Gabrielov's theorem about analytic homomorphisms  in any characteristic  The proof of proposition 3.6 is not correct

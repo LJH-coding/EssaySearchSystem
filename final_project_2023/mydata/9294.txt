@@ -1,0 +1,2 @@
+A class of bi-Hamiltonian systems associated with deformed  Reyman-Semenov-Tian-Shansky tensors  This paper has been withdrawn. The authors realized that the obtained results
+were not new.

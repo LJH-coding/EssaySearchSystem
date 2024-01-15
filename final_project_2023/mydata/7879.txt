@@ -1,0 +1,4 @@
+On the closure of the diagonal of a $T_1$-space  Let X be a topological space. The closure of \Delta = {(x, x) : x \in X} in X
+\times X is a symmetric relation on X. We characterise those equivalence
+relations on an infinite set that arise as the closure of the diagonal with
+respect to a T_1-topology.

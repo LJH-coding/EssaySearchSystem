@@ -1,0 +1,2 @@
+Maximal probabilities of convolution powers of discrete uniform  distributions  We prove optimal constant over root $n$ upper bounds for the maximal
+probabilities of $n$th convolution powers of discrete uniform distributions.

@@ -1,0 +1,3 @@
+Gauge invariances vis-{\'a}-vis Diffeomorphisms in second order metric  gravity: A new Hamiltonian approach  A new analysis of the gauge invariances and their unity with diffeomorphism
+invariances in second order metric gravity is presented which strictly follows
+Dirac's constrained Hamiltonian approach.

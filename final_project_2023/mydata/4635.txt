@@ -1,0 +1,4 @@
+Numerical study of liquid metal flow in a rectangular duct under the  influence of a heterogenous magnetic field  The paper presents 3D numerical results for the laminar liquid metal flow in
+a rectangular duct compared with experimental results. It is shown that the
+magnetic interaction parameter $N$ is the main parameter governing the flow
+provided turbulent pulsations are locally suppressed by magnetic field.

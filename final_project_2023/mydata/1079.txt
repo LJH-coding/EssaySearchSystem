@@ -1,0 +1,1 @@
+The solutions of the N-identical quantum harmonic oscillators  interacting with each other through the harmonic potential  This paper has been withdrawn by the author due to some mistakes

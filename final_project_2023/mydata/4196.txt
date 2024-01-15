@@ -1,0 +1,2 @@
+On the automorphism group of a possible symmetric $(81,16,3)$ design  In this paper we study the automorphism group of a possible symmetric
+$(81,16,3)$ design.

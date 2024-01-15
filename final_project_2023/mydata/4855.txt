@@ -1,0 +1,2 @@
+Une nouvelle condition d'independance pour le theoreme de la limite  centrale  We prove a central limit theorem with aassumptions which are many weak than
+classical conditions

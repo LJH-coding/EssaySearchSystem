@@ -1,0 +1,2 @@
+The Quantum Interference Computer: an experimental proposal  An experiment is proposed to test the interference aspect of the Quantum
+Interference Computer approach

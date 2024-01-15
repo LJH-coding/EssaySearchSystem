@@ -1,0 +1,21 @@
+Some Comments around The Examples against The Generalized Jacobian  Conjecture  We have studied a faded problem, the Jacobian Conjecture ~:
+  \noindent
+  {\sf The Jacobian Conjecture $(JC_n)$}~:
+  If $f_1, \cdots, f_n$ are elements in a polynomial ring $k[X_1, \cdots, X_n]$
+over a field $k$ of characteristic $0$ such that the Jacobian $\det(\partial
+f_i/ \partial X_j) $ is a nonzero constant, then $k[f_1, \cdots, f_n] = k[X_1,
+\cdots, X_n]$.
+  For this purpose, we generalize it to the following form~:
+  \noindent
+  {\sf The Generalized Jacobian Conjecture $(GJC)$}~:
+  {\it Let $\varphi : S \rightarrow T$ be an unramified homomorphism of
+Noetherian domains with $T^\times = \varphi(S^\times)$. Assume that $T$ is a
+factorial domain and that $S$ is a simply connected normal domain. Then
+$\varphi$ is an isomorphism. }
+  For the consistency of our discussion, we raise some serious (or idiot)
+questions and some comments concerning the examples appeared in the papers
+published by the certain excellent mathematicians (though we are unwilling to
+deal with them). Since the existence of such examples would be against our
+original target Conjecture$(GJC)$, we have to dispute their arguments about the
+existence of their respective (so called) counter-examples. Our conclusion is
+that they are not perfect counter-examples as are shown explicitly.

@@ -1,0 +1,9 @@
+A certain continuity property of the residues of the poles of $\sum_{n  \geq 1} \Lambda(n) e^{-2 \pi i q n } n^{-s}$ with respect to $q \in  \mathbb{Q} \cap (0, 1)$ and the Riemann hypothesis  The purpose of this article is to present some result which may characterize
+nontrivial zeros of the Riemann zeta-function off the critical line
+$\text{Re}(s) = 1/2$, if any exists. In brief, it concerns the residues of the
+poles of the function $M(s, q) \equiv \sum_{n \geq 1} \Lambda(n) e^{- 2\pi i q
+n } n^{-s}$, where $\Lambda$ is the arithmetical Mangoldt $\Lambda$-function.
+Suppose that $M(s, 1/2)$ has a pole for some complex number $\rho_{*}$, with
+$\text{Re}(\rho_{*}) > 1/2$. Then we discuss a certain continuity property of
+the residues of the poles of $M(\rho_{*}, q)$ with respect to the variable $q
+\in \mathbb{Q} \cap (1/2, 1)$.

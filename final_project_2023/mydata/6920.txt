@@ -1,0 +1,4 @@
+Functional analytic background for a theory of infinite-dimensional  reductive Lie groups  Motivated by the interesting and yet scattered developments in representation
+theory of Banach-Lie groups, we discuss several functional analytic issues
+which should underlie the notion of infinite-dimensional reductive Lie group:
+norm ideals, triangular integrals, operator factorizations, and amenability.

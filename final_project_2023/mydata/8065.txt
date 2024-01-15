@@ -1,0 +1,3 @@
+Comment on "Removable singularities for solutions of coupled  Yang-Mills-Dirac equations" [J. Math. Phys. 47, 103502 (2006)]  A lemma from elliptic theory is used to improve a recent result by Li
+concerning the removability of an isolated point singularity from solutions of
+the coupled Yang-Mills-Dirac equations.

@@ -1,0 +1,2 @@
+Yangian of the Strange Lie Superalgebra of $\boldsymbol{Q_{n-1}}$ Type,  Drinfel'd Approach  The Yangian of the strange Lie superalgebras in Drinfel'd realization is
+defined. The current system generators and defining relations are described.

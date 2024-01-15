@@ -1,0 +1,2 @@
+A Cohen-Macaulay algebra has only finitely many semidualizing modules  We prove the result stated in the title, which answers the equicharacteristic
+case of a question of Vasconcelos.

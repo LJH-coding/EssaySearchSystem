@@ -1,0 +1,3 @@
+Power-law anisotropic cosmological solution in 5+1 dimensional  Gauss-Bonnet gravity  We write down an anisotropic solution for a flat 5+1 dimensional Universe in
+Gauss-Bonnet gravity. In the model under investigation this solution replaces
+the generalized Kasner solution near a cosmological singularity.

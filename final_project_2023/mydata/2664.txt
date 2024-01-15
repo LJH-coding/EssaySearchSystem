@@ -1,0 +1,4 @@
+Local quantum mechanics with finite Planck mass  In this paper the motion of quantum particles with initial mass m is
+investigated. The quantum mechanics equation is formulated and solved. It is
+shown that the wave function contains the component which is depended on the
+gravitation fine structure constant

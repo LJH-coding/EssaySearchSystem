@@ -1,0 +1,5 @@
+Riesz bases of root vectors of indefinite Sturm-Liouville problems with  eigenparameter dependent boundary conditions. II  We consider a regular indefinite Sturm-Liouville problem with two
+self-adjoint boundary conditions affinely dependent on the eigenparameter. We
+give sufficient conditions under which the root vectors of this Sturm-Liouville
+problem can be selected to form a Riesz basis of a corresponding weighted
+Hilbert space.

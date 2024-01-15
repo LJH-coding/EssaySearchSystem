@@ -1,0 +1,5 @@
+On critical normal sections for two-dimensional immersions in R^n and a  Riemann-Hilbert problem  For orthonormal normal sections of two-dimensional immersions in R^4 we
+define torsion coefficients and a functional for the total torsion. We discuss
+normal sections which are critical for this functional. In particular, a global
+estimate for the torsion coefficients of a critical normal section in terms of
+the curvature of the normal bundle is provided.

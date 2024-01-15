@@ -1,0 +1,3 @@
+Review of the FoPL paper [1] The Evans Lemma of Differential Geometry  The Evans Lemma is basic for Myron W. Evans' GCUFT or ECE Theory. Evans has
+given two proofs of his Lemma. Both proofs are shown here to be in error and
+beyond repair.

@@ -1,0 +1,6 @@
+Reducing phase error in long numerical binary black hole evolutions with  sixth order finite differencing  We describe a modification of a fourth-order accurate ``moving puncture''
+evolution code, where by replacing spatial fourth-order accurate differencing
+operators in the bulk of the grid by a specific choice of sixth-order accurate
+stencils we gain significant improvements in accuracy. We illustrate the
+performance of the modified algorithm with an equal-mass simulation covering
+nine orbits.

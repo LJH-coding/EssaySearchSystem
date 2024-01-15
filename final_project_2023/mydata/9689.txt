@@ -1,0 +1,2 @@
+A proof of Culter's theorem on the existence of periodic orbits in  polygonal outer billiards  We discuss a recent result by C. Culter: every polygonal outer billiard has a
+periodic trajectory.

@@ -1,0 +1,3 @@
+Poisson approximation for large clusters in the supercritical FK model  Using the Chen-Stein method, we show that the spatial distribution of large
+finite clusters in the supercritical FK model approximates a Poisson process
+when the ratio weak mixing property holds.

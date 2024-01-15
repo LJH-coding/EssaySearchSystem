@@ -1,0 +1,3 @@
+The integrals in Gradshteyn and Rhyzik. Part 2: Elementary logarithmic  integrals  We describe methods to evaluate elementary logarithmic integrals. The
+integrand is the product of a rational function and a linear polynomial in ln
+x.

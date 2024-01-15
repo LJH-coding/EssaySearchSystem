@@ -1,0 +1,2 @@
+On limit cycles appearing by polynomial perturbation of Darbouxian  integrable systems  We prove an existential finiteness Varchenko-Khovanskii type result for
+integrals of rational 1-forms over the level curves of Darbouxian integrals.
