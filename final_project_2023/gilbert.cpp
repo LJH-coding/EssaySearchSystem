@@ -15,7 +15,7 @@
 #include <unistd.h>
 #include <omp.h>
 #pragma loop-opt(on)
-//#pragma GCC target("sse,sse2,sse3,ssse3,sse4,avx,avx2,fma,tune=native")
+#pragma GCC target("sse,sse2,sse3,ssse3,sse4,avx,avx2,fma,tune=native")
 #pragma GCC optimize("unroll-loops")
 #pragma GCC optimize("O3")
 #pragma GCC optimize("Ofast")
@@ -121,7 +121,7 @@ inline bool readFile(string &dir, int data_id) {
     int fd = open(file_path.c_str(), O_RDONLY);
     if (fd == -1) return false;
 
-//    posix_fadvise(fd, 0, 0, 1);
+    posix_fadvise(fd, 0, 0, 1);
 
     char buf[BUFFER_SIZE + 1];
     int first = 1;

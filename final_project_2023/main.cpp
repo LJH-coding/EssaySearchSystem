@@ -1,16 +1,8 @@
 #define FILE_EXTENSION ".txt"
-#include <functional>
-#include <fstream>
-#include <string>
-#include <cstring>
-#include <vector>
-#include <iostream>
-#include <array>
-#include <set>
 #include <bits/stdc++.h>
 #include "omp.h"
 
-#pragma GCC target("avx2,bmi,bmi2,lzcnt,popcnt")
+#pragma GCC target("sse,sse2,sse3,ssse3,sse4,avx,avx2,bmi,bmi2,lzcnt,popcnt")
 #pragma GCC optimize("O3,unroll-loops,Ofast")
 
 using namespace std;
@@ -277,7 +269,9 @@ void save_ans() {
     #pragma omp parallel for
     for(int i = 0; i < qry.size(); ++i) {
         char op = '$';
-        for(auto [a, b] : qry[i]) {
+        for(int j = 0; j < qry[i].size(); ++j) {
+            char a = qry[i][j].first;
+            int b = qry[i][j].second;
             if(a == 'p') {
                 Operator(op, ans[i], prefix_ans[b]);
             }
