@@ -1,5 +1,5 @@
 search:
-	g++ -fopenmp -std=c++17 -O2 -o essay-search ./*.cpp
+	g++ -fopenmp -std=c++17 -O2 -o essay-search ./main.cpp
 query:
 	./essay-search data query.txt output.txt
 	diff output.txt query_output.txt

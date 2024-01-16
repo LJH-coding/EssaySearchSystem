@@ -1,128 +1,119 @@
-#define FILE_EXTENSION ".txt"
 #include <bits/stdc++.h>
 #include "omp.h"
 
-#pragma GCC target("sse,sse2,sse3,ssse3,sse4,avx,avx2,bmi,bmi2,lzcnt,popcnt")
-#pragma GCC optimize("O3,unroll-loops,Ofast")
+#pragma GCC target("sse,sse2,sse3,ssse3,sse4,avx,avx2,abm,mmx,bmi,bmi2,lzcnt,popcnt,fma,tune=native")
+#pragma GCC optimize("O3,unroll-loops,Ofast,Os,no-stack-protector,fast-math")
+#pragma comment(linker, "/stack:200000000")
 
 using namespace std;
 
+#define FILE_EXTENSION ".txt"
+#define FILE_NUMS 30000
+#define NUM_THREADS 20
 #define endl '\n'
+#define all(v) begin(v), end(v)
 
 const int inf = 1e9 + 7;
 
-struct Trie {
-public:
-    struct Node {
-		array<Node*, 26> go{};
-        int mx_depth = -inf;
-        bool is_end = 0;
-	};
-	Trie() {
-		root = new_node();
-		sz = 1;
-	}
-
-	int size() const { return sz; }
-
-	Node* next(Node* p, char c) {
-		int v = c - 'a';
-		if(p->go[v] == 0) {
-			p->go[v] = new_node();
-			sz++;
-		}
-		return p->go[v];
-	}
-
-	void insert(const string& s) {
-		Node* p = root;
-        int depth = 0;
-        p->mx_depth = max(p->mx_depth, (int)s.size());
-		for(char c : s) {
-			p = next(p, c);
-            depth++;
-            p->mx_depth = max(p->mx_depth, (int)s.size() - depth);
-		}
-        p->is_end = 1;
-	}
-
-	void rev_insert(string s) {
-        reverse(s.begin(), s.end());
-        insert(s);
-	}
-
-	void clear() {
-		root = new_node();
-		sz = 1;
-	}
-
-    inline bool query_exact(const string& s) const {
-        Node* p = root;
-        for(int v : s) {
-            v -= 'a';
-            if(p->go[v]) p = p->go[v];
-            else return 0;
-        }
-        return p->is_end;
-    }
-
-	inline bool query_prefix(const string& a) const {
-        Node* p = root;
-		for(int v : a) {
-            v -= 'a';
-			if(p->go[v]) p = p->go[v];
-            else return 0;
-		}
-		return 1;
-	}
-
-    inline bool query_wild(const string& a, int idx, Node* cur, int cnt) const {
-        if(idx == a.size()) return cur->is_end;
-        if(cnt > cur->mx_depth) return 0;
-        if(a[idx] == '*') {
-            if(idx == a.size() - 1) return 1;
-            if(cur->go[a[idx + 1] - 'a']) 
-                if(query_wild(a, idx + 2, cur->go[a[idx + 1] - 'a'], cnt - 1))
-                    return 1;
-            for(int i = 0; i < 26; ++i) {
-                if(cur->go[i]) {
-                    if(query_wild(a, idx, cur->go[i], cnt)) return 1;
-                }
-            }
-            return 0;
-        }
-        else {
-            if(cur->go[a[idx] - 'a']) return query_wild(a, idx + 1, cur->go[a[idx] - 'a'], cnt - 1);
-            else return 0;
-        }
-	}
-    inline bool query_wild(const string &s) {
-        int cnt = 0;
-        for(auto &i : s) if(isalpha(i)) cnt++;
-        return query_wild(s, 0, root, cnt);
-    }
-
-private:
-	Node* root = nullptr;
-	int sz = 0;
-
-	Node* new_node() {
-		return new Node();
-	}
+struct Node {
+    Node *go[26] = {};
+    int mx_depth = -inf;
+    set<short> path, tail;
 };
 
-string int_to_string(int num) { //TODO
-    return to_string(num);
+Node* new_node() {
+    return new Node();
 }
 
-vector<string> word_parse(vector<string> tmp_string){
+inline Node* next(Node *p, char c) {
+    int v = c - 'a';
+    if(p->go[v] == NULL) {
+        p->go[v] = new_node();
+    }
+    return p->go[v];
+}
+
+inline void insert(Node *p, const string& s, const short &id) {
+    int depth = 0;
+    p->mx_depth = max(p->mx_depth, (int)s.size());
+    for(char c : s) {
+        p = next(p, c);
+        depth++;
+        p->path.insert(id);
+        p->mx_depth = max(p->mx_depth, (int)s.size() - depth);
+    }
+    p->tail.insert(id);
+}
+
+inline void rev_insert(Node *p, string s, const short &id) {
+    reverse(s.begin(), s.end());
+    insert(p, s, id);
+}
+
+inline set<short> query_exact(Node *p, const string& s) {
+    for(int v : s) {
+        v -= 'a';
+        if(p->go[v]) p = p->go[v];
+        else return {};
+    }
+    return p->tail;
+}
+
+inline set<short> query_prefix(Node *p, const string& a) {
+    for(int v : a) {
+        v -= 'a';
+        if(p->go[v]) p = p->go[v];
+        else return {};
+    }
+    return p->path;
+}
+
+inline set<short> query_wild(const string& a, const int &idx, Node* cur, const int &cnt) {
+    if(idx == a.size()) return cur->tail;
+    if(cnt > cur->mx_depth) return {};
+    if(a[idx] == '*') {
+        if(idx == a.size() - 1) return cur->path;
+        set<short> res;
+        if(cur->go[a[idx + 1] - 'a']) res = query_wild(a, idx + 2, cur->go[a[idx + 1] - 'a'], cnt - 1);
+        for(int i = 0; i < 26; ++i) {
+            if(cur->go[i]) {
+                auto tmp = query_wild(a, idx, cur->go[i], cnt);
+                for(auto &i : tmp) res.insert(i);
+            }
+        }
+        return res;
+    }
+    else {
+        if(cur->go[a[idx] - 'a']) return query_wild(a, idx + 1, cur->go[a[idx] - 'a'], cnt - 1);
+        else return {};
+    }
+}
+inline set<short> query_wild(Node *p, const string &s) {
+    int cnt = 0;
+    for(auto &i : s) if(isalpha(i)) cnt++;
+    return query_wild(s, 0, p, cnt);
+}
+
+inline string query_parse(const string &qry) {
+    string res;
+    for(auto &i : qry) {
+        if(isalpha(i)) {
+            if(i >= 'A' && i <= 'Z') res.push_back(i - 'A' + 'a');
+            else res.push_back(i);
+        }
+        else if(i == '*' and qry[0] == '<' and (res.empty() or res.back() != '*')) res.push_back(i);
+    }
+    return res;
+}
+
+inline vector<string> word_parse(const vector<string> &tmp_string) {
 	vector<string> parse_string;
 	for(auto& word : tmp_string){
 		string new_str;
     	for(auto &ch : word){
 			if(isalpha(ch)) {
-                if(ch >= 'A' && ch <= 'Z') ch = ch - 'A' + 'a';
-				new_str.push_back(ch);
+                if(ch >= 'A' && ch <= 'Z') new_str.push_back(ch - 'A' + 'a');
+                else new_str.push_back(ch);
             }
 		}
         if(new_str.size() > 0)
@@ -131,253 +122,207 @@ vector<string> word_parse(vector<string> tmp_string){
 	return parse_string;
 }
 
-vector<string> split(const string& str, const string& delim) {
-	vector<string> res;
-	if("" == str) return res;
+inline vector<string> split(const string& str, const string& pattern) {
+    vector<string> result;
+    string::size_type begin, end;
 
-	char * strs = new char[str.length() + 1] ; 
-	strcpy(strs, str.c_str());
+    end = str.find(pattern);
+    begin = 0;
 
-	char * d = new char[delim.length() + 1];
-	strcpy(d, delim.c_str());
+    while (end != string::npos) {
+        if (end - begin != 0) {
+            result.push_back(str.substr(begin, end-begin)); 
+        }    
+        begin = end + pattern.size();
+        end = str.find(pattern, begin);
+    }
 
-	char *p = strtok(strs, d);
-	while(p) {
-		string s = p; 
-		res.push_back(s); 
-		p = strtok(NULL, d);
-	}
-
-	return res;
+    if (begin != str.length()) {
+        result.push_back(str.substr(begin));
+    }
+    return result;
 }
 
-vector<vector<pair<char, int>>> qry;
-vector<string> prefix, suffix, exact, wild;
-vector<vector<int>> ans;
-vector<vector<int>> prefix_ans, suffix_ans, exact_ans, wild_ans;
-
-int data_nums;
-string title[100005];
-vector<string> data_set[100005];
-Trie prefix_trie[100005] = {}, suffix_trie[100005] = {};
-
-void solve() {
-    prefix_ans.resize(prefix.size());
-    exact_ans.resize(exact.size());
-    suffix_ans.resize(suffix.size());
-    wild_ans.resize(wild.size());
-    int n = data_nums, q = qry.size();
-
-    //solve prefix and exact
-    #pragma omp parallel for
-    for(int i = 0; i < n; ++i) {
-        for(auto j : data_set[i]) {
-            prefix_trie[i].insert(j);
-        }
+inline void And(set<short> &a, const set<short> &b) {
+    set<short> res;
+    for(auto &i : a) {
+        if(b.find(i) != b.end()) res.insert(i);
     }
-    #pragma omp parallel for
-    for(int i = 0; i < prefix.size(); ++i) {
-        for(int j = 0; j < n; ++j) {
-            if(prefix_trie[j].query_prefix(prefix[i])) prefix_ans[i].push_back(j);
-        }
-    }
-    #pragma omp parallel for
-    for(int i = 0; i < exact.size(); ++i) {
-        for(int j = 0; j < n; ++j) {
-            if(prefix_trie[j].query_exact(exact[i]))
-                exact_ans[i].push_back(j);
-        }
-
-    }
-    #pragma omp parallel for
-    for(int i = 0; i< wild.size(); ++i) {
-        for(int j = 0; j < n; ++j) {
-            if(prefix_trie[j].query_wild(wild[i]))
-                wild_ans[i].push_back(j);
-        }
-    }
-    //solve suffix
-    #pragma omp parallel for
-    for(int i = 0; i < n; ++i) {
-        for(auto j : data_set[i]) {
-            suffix_trie[i].rev_insert(j);
-        }
-    }
-    #pragma omp parallel for
-    for(int i = 0; i < suffix.size(); ++i) {
-        reverse(suffix[i].begin(), suffix[i].end());
-        for(int j = 0; j < n; ++j) {
-            if(suffix_trie[j].query_prefix(suffix[i]))
-                suffix_ans[i].push_back(j);
-        }
-    }
-
+    a = res;
 }
 
-vector<int> And(const vector<int> &a, const vector<int> &b) {
-    vector<int> res;
-    for(int i = 0, j = 0; i < a.size() and j < b.size(); ) {
-        if(a[i] < b[j]) i++;
-        else if(a[i] > b[j]) j++;
-        else {
-            res.push_back(a[i]);
-            i++, j++;
+inline void Or(set<short> &a, const set<short> &b) {
+    for(auto &i : b) a.insert(i);
+}
+
+inline void Sub(set<short> &a, const set<short> &b) {
+    set<short> res;
+    for(auto &i : a) {
+        if(b.find(i) == b.end()) res.insert(i);
+    }
+    a = res;
+}
+
+int data_nums = 0;
+string title[FILE_NUMS];
+vector<string> data_set[FILE_NUMS];
+Node *prefix_trie[NUM_THREADS] = {}, *suffix_trie[NUM_THREADS] = {};
+vector<string> qry;
+vector<set<short>> ans;
+
+inline bool readfile(const string &path, const int &id) {
+	fstream fi;
+    fi.open(path, ios::in);
+    if(!fi.is_open()) return 0;
+    string title_name, tmp;
+    getline(fi, title_name);
+    title[id] = title_name;
+    vector<string> tmp_string = split(title_name, " ");
+    vector<string> content = word_parse(tmp_string);
+    for(auto &i : content) {
+        data_set[id].push_back(i);
+    }
+    while(getline(fi, tmp)) {
+        tmp_string = split(tmp, " ");
+        vector<string> content = word_parse(tmp_string);
+        for(auto &i : content) { 
+            data_set[id].push_back(i);
         }
     }
-    return res;
+    fi.close();
+    return 1;
 }
 
-vector<int> Or(const vector<int> &a, const vector<int> &b) {
-    vector<int> res = a;
-    for(auto i : b) {
-        res.push_back(i);
-    }
-    sort(res.begin(), res.end());
-    res.erase(unique(res.begin(), res.end()), res.end());
-    return res;
+inline void readquery(const string &path) {
+    fstream fi;
+    fi.open(path, ios::in);
+    string tmp;
+    while(getline(fi, tmp)) qry.push_back(tmp);
+    ans.resize(qry.size());
+    fi.close();
 }
 
-vector<int> Sub(const vector<int> &a, const vector<int> &b) {
-    vector<int> res;
-    int i = 0;
-    for(int j = 0; i < a.size() and j < b.size(); ) {
-        if(a[i] < b[j]) res.push_back(a[i++]);
-        else if(a[i] > b[j]) j++;
-        else i++, j++;
+inline void build_trie() {
+    #pragma omp parallel for num_threads(NUM_THREADS)
+    for(int i = 0; i < NUM_THREADS; ++i) {
+        prefix_trie[i] = new Node();
+        suffix_trie[i] = new Node();
     }
-    while(i < a.size()) res.push_back(a[i++]);
-    return res;
+    #pragma omp parallel for num_threads(NUM_THREADS)
+    for(int i = 0; i < data_nums; ++i) {
+        int thread_id = omp_get_thread_num();
+        for(const auto &s : data_set[i]) {
+            insert(prefix_trie[thread_id], s, i);
+            rev_insert(suffix_trie[thread_id], s, i);
+        }
+    }
 }
 
-void Operator(char op, vector<int> &a, const vector<int> b) {
-    if(op == '$') {
-        a = b;
+inline set<short> query(const string &s) {
+    string tmp = query_parse(s);
+    set<short> res[NUM_THREADS];
+    if(s[0] == '"') {
+        #pragma omp parallel for num_threads(NUM_THREADS)
+        for(int i = 0; i < NUM_THREADS; ++i) {
+            res[i] = query_exact(prefix_trie[i], tmp);
+        }
     }
-    else if(op == '+') {
-        a = And(a, b);
+    else if(s[0] == '*') {
+        reverse(all(tmp));
+        #pragma omp parallel for num_threads(NUM_THREADS)
+        for(int i = 0; i < NUM_THREADS; ++i) {
+            res[i] = query_prefix(suffix_trie[i], tmp);
+        }
     }
-    else if(op == '-') {
-        a = Sub(a, b);
+    else if(s[0] == '<') {
+        #pragma omp parallel for num_threads(NUM_THREADS)
+        for(int i = 0; i < NUM_THREADS; ++i) {
+            res[i] = query_wild(prefix_trie[i], tmp);
+        }
     }
     else {
-        a = Or(a, b);
+        #pragma omp parallel for num_threads(NUM_THREADS)
+        for(int i = 0; i < NUM_THREADS; ++i) {
+            res[i] = query_prefix(prefix_trie[i], tmp);
+        }
     }
+    for(int i = 1; i < NUM_THREADS; ++i) for(auto &j : res[i]) res[0].insert(j);
+    return res[0];
 }
 
-void save_ans() {
-    ans.resize(qry.size());
-    #pragma omp parallel for
+inline void solve() {
+    #pragma omp parallel for num_threads(NUM_THREADS)
     for(int i = 0; i < qry.size(); ++i) {
-        char op = '$';
-        for(int j = 0; j < qry[i].size(); ++j) {
-            char a = qry[i][j].first;
-            int b = qry[i][j].second;
-            if(a == 'p') {
-                Operator(op, ans[i], prefix_ans[b]);
+        vector<string> tmp_string = split(qry[i], " ");
+        ans[i] = query(tmp_string[0]);
+        for(int j = 1; j < tmp_string.size(); j += 2) {
+            if(tmp_string[j][0] == '+') {
+                And(ans[i], query(tmp_string[j + 1]));
             }
-            else if(a == 's') {
-                Operator(op, ans[i], suffix_ans[b]);
-            }
-            else if(a == 'w') {
-                Operator(op, ans[i], wild_ans[b]);
-            }
-            else if(a == 'e') {
-                Operator(op, ans[i], exact_ans[b]);
+            else if(tmp_string[j][0] == '-') {
+                Sub(ans[i], query(tmp_string[j + 1]));
             }
             else {
-                op = a;
+                Or(ans[i], query(tmp_string[j + 1]));
             }
         }
     }
 }
 
 int main(int argc, char *argv[]) {
+    ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
+    omp_set_num_threads(NUM_THREADS);
+    omp_set_dynamic(0);
+    clock_t start, end;
 
     string data_dir = argv[1] + string("/");
 	string query = string(argv[2]);
 	string output = string(argv[3]);
 
-	string tmp;
-	fstream fi;
-    fstream fo;
-	vector<string> tmp_string;
-
-    //query
-    fi.open(query, ios::in);
-    while(getline(fi, tmp)) {
-        tmp_string = split(tmp, " ");
-        vector<pair<char, int>> v;
-        for(auto &i : tmp_string) {
-            if(i.size() == 1 and isalpha(i[0]) == 0) {
-                v.push_back({i[0], -1}); // operator
-                continue;
-            }
-            for(auto &j : i) {
-                if(isalpha(j) and j >= 'A' and j <= 'Z') {
-                    j = j - 'A' + 'a';
-                }
-            }
-            if(i[0] == '"' and i.back() == '"') { //exact
-                i.pop_back(); 
-                i.erase(i.begin());
-                v.push_back({'e', exact.size()});
-                exact.push_back(i);
-            }
-            else if(i[0] == '*' and i.back() == '*') { //suffix
-                i.pop_back(); 
-                i.erase(i.begin());
-                v.push_back({'s', suffix.size()});
-                suffix.push_back(i);
-            }
-            else if(i[0] == '<' and i.back() == '>') {
-                i.pop_back(); 
-                i.erase(i.begin());
-                v.push_back({'w', wild.size()});
-                wild.push_back(i);
-            }
-            else {//prefix
-                v.push_back({'p', prefix.size()});
-                prefix.push_back(i);
-            }
-        }
-        qry.push_back(v);
-    }
-    fi.close();
-    
-    for(int id = 0; ; ++id, ++data_nums) {
+    cout << "readfile : ";
+    start = clock();
+    //readfile
+    for(short id = 0; ; ++id, ++data_nums) {
         string path = data_dir + to_string(id) + FILE_EXTENSION;
-        fi.open(path, ios::in);
-        if(!fi.is_open()) break;
-        string title_name;
-        getline(fi, title_name);
-        title[id] = title_name;
-
-        tmp_string = split(title_name, " ");
-        vector<string> content = word_parse(tmp_string);
-        for(auto &i : content)
-            data_set[id].push_back(i);
-        while(getline(fi, tmp)) {
-            tmp_string = split(tmp, " ");
-            vector<string> content = word_parse(tmp_string);
-            for(auto &i : content)
-                data_set[id].push_back(i);
-        }
-
-        fi.close();
+        if(!readfile(path, id)) break;
     }
+    end = clock();
+    cout << end - start << endl;
 
+    cout << "build_trie : ";
+    start = clock();
+    //build trie
+    build_trie();
+    end = clock();
+    cout << end - start << endl;
 
+    cout << "read query : ";
+    start = clock();
+    //readquery
+    readquery(query);
+    end = clock();
+    cout << end - start << endl;
+
+    cout << "solve : ";
+    start = clock();
     solve();
-    save_ans();
+    end = clock();
+    cout << end - start << endl;
 
-    fo.open(output.c_str(), ios::out);
+    cout << "output answer : ";
+    start = clock();
+    fstream fo;
+    fo.open(output, ios::out);
     for(int i = 0; i < qry.size(); ++i) {
         if(ans[i].size() == 0) {
             fo << "Not Found!" << endl;
         }
-        for(auto j : ans[i]) {
+        for(const auto &j : ans[i]) {
             fo << title[j] << endl;
         }
     }
     fo.close();
+    end = clock();
+    cout << end - start << endl;
+
 }
