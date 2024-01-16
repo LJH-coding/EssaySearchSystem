@@ -9,7 +9,7 @@ using namespace std;
 
 #define FILE_EXTENSION ".txt"
 #define FILE_NUMS 30000
-#define NUM_THREADS 20
+#define NUM_THREADS 6
 #define endl '\n'
 #define all(v) begin(v), end(v)
 
@@ -270,47 +270,28 @@ inline void solve() {
 }
 
 int main(int argc, char *argv[]) {
+//    cout << "NUM_THREADS : " << NUM_THREADS << endl;
     ios::sync_with_stdio(0), cin.tie(0), cout.tie(0);
     omp_set_num_threads(NUM_THREADS);
-    omp_set_dynamic(0);
-    clock_t start, end;
 
     string data_dir = argv[1] + string("/");
 	string query = string(argv[2]);
 	string output = string(argv[3]);
 
-    cout << "readfile : ";
-    start = clock();
     //readfile
     for(short id = 0; ; ++id, ++data_nums) {
         string path = data_dir + to_string(id) + FILE_EXTENSION;
         if(!readfile(path, id)) break;
     }
-    end = clock();
-    cout << end - start << endl;
 
-    cout << "build_trie : ";
-    start = clock();
     //build trie
     build_trie();
-    end = clock();
-    cout << end - start << endl;
 
-    cout << "read query : ";
-    start = clock();
     //readquery
     readquery(query);
-    end = clock();
-    cout << end - start << endl;
 
-    cout << "solve : ";
-    start = clock();
     solve();
-    end = clock();
-    cout << end - start << endl;
 
-    cout << "output answer : ";
-    start = clock();
     fstream fo;
     fo.open(output, ios::out);
     for(int i = 0; i < qry.size(); ++i) {
@@ -322,7 +303,5 @@ int main(int argc, char *argv[]) {
         }
     }
     fo.close();
-    end = clock();
-    cout << end - start << endl;
 
 }
