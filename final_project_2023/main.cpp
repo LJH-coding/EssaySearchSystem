@@ -18,7 +18,7 @@ const int inf = 1e9 + 7;
 struct Node {
     Node *go[26] = {};
     int mx_depth = -inf;
-    set<short> path, tail;
+    set<int> path, tail;
 };
 
 Node* new_node() {
@@ -33,7 +33,7 @@ inline Node* next(Node *p, char c) {
     return p->go[v];
 }
 
-inline void insert(Node *p, const string& s, const short &id) {
+inline void insert(Node *p, const string& s, const int &id) {
     int depth = 0;
     p->mx_depth = max(p->mx_depth, (int)s.size());
     for(char c : s) {
@@ -45,12 +45,13 @@ inline void insert(Node *p, const string& s, const short &id) {
     p->tail.insert(id);
 }
 
-inline void rev_insert(Node *p, string s, const short &id) {
+inline void rev_insert(Node *p, string s, const int &id) {
     reverse(s.begin(), s.end());
     insert(p, s, id);
 }
 
-inline set<short> query_exact(Node *p, const string& s) {
+inline set<int> query_exact(Node *p, const string& s) {
+    if(s.size() > p->mx_depth) return {};
     for(int v : s) {
         v -= 'a';
         if(p->go[v]) p = p->go[v];
@@ -59,7 +60,8 @@ inline set<short> query_exact(Node *p, const string& s) {
     return p->tail;
 }
 
-inline set<short> query_prefix(Node *p, const string& a) {
+inline set<int> query_prefix(Node *p, const string& a) {
+    if(a.size() > p->mx_depth) return {};
     for(int v : a) {
         v -= 'a';
         if(p->go[v]) p = p->go[v];
@@ -68,12 +70,12 @@ inline set<short> query_prefix(Node *p, const string& a) {
     return p->path;
 }
 
-inline set<short> query_wild(const string& a, const int &idx, Node* cur, const int &cnt) {
+inline set<int> query_wild(const string& a, const int &idx, Node* cur, const int &cnt) {
     if(idx == a.size()) return cur->tail;
     if(cnt > cur->mx_depth) return {};
     if(a[idx] == '*') {
         if(idx == a.size() - 1) return cur->path;
-        set<short> res;
+        set<int> res;
         if(cur->go[a[idx + 1] - 'a']) res = query_wild(a, idx + 2, cur->go[a[idx + 1] - 'a'], cnt - 1);
         for(int i = 0; i < 26; ++i) {
             if(cur->go[i]) {
@@ -88,7 +90,7 @@ inline set<short> query_wild(const string& a, const int &idx, Node* cur, const i
         else return {};
     }
 }
-inline set<short> query_wild(Node *p, const string &s) {
+inline set<int> query_wild(Node *p, const string &s) {
     int cnt = 0;
     for(auto &i : s) if(isalpha(i)) cnt++;
     return query_wild(s, 0, p, cnt);
@@ -131,32 +133,32 @@ inline vector<string> split(const string& str, const string& pattern) {
 
     while (end != string::npos) {
         if (end - begin != 0) {
-            result.push_back(str.substr(begin, end-begin)); 
+            result.emplace_back(str.substr(begin, end-begin)); 
         }    
         begin = end + pattern.size();
         end = str.find(pattern, begin);
     }
 
     if (begin != str.length()) {
-        result.push_back(str.substr(begin));
+        result.emplace_back(str.substr(begin));
     }
     return result;
 }
 
-inline void And(set<short> &a, const set<short> &b) {
-    set<short> res;
+inline void And(set<int> &a, const set<int> &b) {
+    set<int> res;
     for(auto &i : a) {
         if(b.find(i) != b.end()) res.insert(i);
     }
     a = res;
 }
 
-inline void Or(set<short> &a, const set<short> &b) {
+inline void Or(set<int> &a, const set<int> &b) {
     for(auto &i : b) a.insert(i);
 }
 
-inline void Sub(set<short> &a, const set<short> &b) {
-    set<short> res;
+inline void Sub(set<int> &a, const set<int> &b) {
+    set<int> res;
     for(auto &i : a) {
         if(b.find(i) == b.end()) res.insert(i);
     }
@@ -168,7 +170,7 @@ string title[FILE_NUMS];
 vector<string> data_set[FILE_NUMS];
 Node *prefix_trie[NUM_THREADS] = {}, *suffix_trie[NUM_THREADS] = {};
 vector<string> qry;
-vector<set<short>> ans;
+vector<set<int>> ans;
 
 inline bool readfile(const string &path, const int &id) {
 	fstream fi;
@@ -180,13 +182,13 @@ inline bool readfile(const string &path, const int &id) {
     vector<string> tmp_string = split(title_name, " ");
     vector<string> content = word_parse(tmp_string);
     for(auto &i : content) {
-        data_set[id].push_back(i);
+        data_set[id].emplace_back(i);
     }
     while(getline(fi, tmp)) {
         tmp_string = split(tmp, " ");
         vector<string> content = word_parse(tmp_string);
         for(auto &i : content) { 
-            data_set[id].push_back(i);
+            data_set[id].emplace_back(i);
         }
     }
     fi.close();
@@ -197,7 +199,7 @@ inline void readquery(const string &path) {
     fstream fi;
     fi.open(path, ios::in);
     string tmp;
-    while(getline(fi, tmp)) qry.push_back(tmp);
+    while(getline(fi, tmp)) qry.emplace_back(tmp);
     ans.resize(qry.size());
     fi.close();
 }
@@ -218,9 +220,9 @@ inline void build_trie() {
     }
 }
 
-inline set<short> query(const string &s) {
+inline set<int> query(const string &s) {
     string tmp = query_parse(s);
-    set<short> res[NUM_THREADS];
+    set<int> res[NUM_THREADS];
     if(s[0] == '"') {
         #pragma omp parallel for num_threads(NUM_THREADS)
         for(int i = 0; i < NUM_THREADS; ++i) {
@@ -279,7 +281,7 @@ int main(int argc, char *argv[]) {
 	string output = string(argv[3]);
 
     //readfile
-    for(short id = 0; ; ++id, ++data_nums) {
+    for(int id = 0; ; ++id, ++data_nums) {
         string path = data_dir + to_string(id) + FILE_EXTENSION;
         if(!readfile(path, id)) break;
     }
